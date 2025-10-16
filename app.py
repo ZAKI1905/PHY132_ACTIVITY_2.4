@@ -103,23 +103,32 @@ def compute_kirchhoff_coefficients(V1, V2, R1, R2, R3):
     eq1 = ( 1.0, -1.0, -1.0, 0.0)
     # Left loop: V1 - R3*I3 - R1*I1 = 0  => (-R1, 0, -R3, V1)
     eq2 = (-float(R1), 0.0, -float(R3), float(V1))
-    # Right loop: V2 + R2*I2 - R3*I3 = 0 => (0, R2, -R3, -V2)
-    eq3 = (0.0, float(R2), -float(R3), -float(V2))
+    # Right loop: V2 + R2*I2 - R3*I3 = 0 => (0, R2, -R3, V2)
+    eq3 = (0.0, float(R2), -float(R3), float(V2))
     # Big loop: V1 - R2*I2 - V2 - R1*I1 = 0 => (-R1, -R2, 0, V1 - V2)
     eq4 = (-float(R1), -float(R2), 0.0, float(V1) - float(V2))
     return [eq1, eq2, eq3, eq4]
 
-def solve_currents_from_params(V1, V2, R1, R2, R3):
-    """
-    Solve the 3-unknown (I1,I2,I3) system using three independent equations.
-    We use: Junction (eq1), Left loop (eq2), Right loop (eq3).
-    """
-    eqs = compute_kirchhoff_coefficients(V1, V2, R1, R2, R3)
-    A = np.array([eqs[0][0:3], eqs[1][0:3], eqs[2][0:3]], dtype=np.float64)  # coefficients
-    b = -np.array([eqs[0][3],     eqs[1][3],     eqs[2][3]], dtype=np.float64)  # constants moved to RHS
-    I = np.linalg.solve(A, b)  # in amperes if V,Ω
-    return I  # A
+# def solve_currents_from_params(V1, V2, R1, R2, R3):
+#     """
+#     Solve the 3-unknown (I1,I2,I3) system using three independent equations.
+#     We use: Junction (eq1), Left loop (eq2), Right loop (eq3).
+#     """
+#     eqs = compute_kirchhoff_coefficients(V1, V2, R1, R2, R3)
+#     A = np.array([eqs[0][0:3], eqs[1][0:3], eqs[2][0:3]], dtype=np.float64)  # coefficients
+#     b = -np.array([eqs[0][3],     eqs[1][3],     eqs[2][3]], dtype=np.float64)  # constants moved to RHS
+#     I = np.linalg.solve(A, b)  # in amperes if V,Ω
+#     return I  # A
 
+def currents_analytic_A(V1, V2, R1, R2, R3):
+    # Denominator
+    D = R1*R2 + R1*R3 + R2*R3
+
+    # With +V2 in the right-loop equation:  V2 + R2*I2 - R3*I3 = 0
+    I2 = (-R1*V2 + R3*(V1 - V2)) / D
+    I3 = ( R1*V2 + R2*V1 ) / D
+    I1 = I2 + I3
+    return I1, I2, I3  # Amps
 # =========================
 # 📦 Load data
 # =========================
@@ -228,7 +237,9 @@ def expected_currents_mA(set_no: int):
     if key in JAVAB:
         return list(map(float, JAVAB[key]))
     # Compute from parameters (V in V, R in Ω -> I in A -> convert to mA)
-    I_A = solve_currents_from_params(V1, V2, R1, R2, R3)
+    # I_A = solve_currents_from_params(V1, V2, R1, R2, R3)
+    I_A = currents_analytic_A(V1, V2, R1, R2, R3)
+
     return (I_A * 1e3).tolist()
 
 if st.button("Check my currents"):
