@@ -168,7 +168,16 @@ st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_con
 expected_eqs = compute_kirchhoff_coefficients(V1, V2, R1, R2, R3)
 
 # ---- Equations input ----
-st.subheader("Enter three independent equations (coefficients of I1, I2, I3, and constant term D) for:  A·I1 + B·I2 + C·I3 + D = 0")
+st.subheader("Enter your Kirchhoff equation coefficients in the following format:")
+
+st.latex(r"A \cdot I_1 \,+ \, B \cdot I_2 \, +\,  C \cdot I_3\,  +\,  D \, =\,  0")
+
+st.write("Where:")
+st.markdown(r"""
+- $A, B, C$ are the coefficients of $I_1, I_2, I_3$, respectively.  
+- $D$ is the constant term (voltage sum).
+""", unsafe_allow_html=True)
+
 coeff_labels = ["I1", "I2", "I3", "Constant (D)"]
 student_eqs = []
 for i in range(3):
