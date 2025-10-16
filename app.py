@@ -231,16 +231,23 @@ with c2:
 with c3:
     I3_mA = st.number_input("I3 (mA)", min_value=0.0, step=0.01, format="%.2f")
 
+# def expected_currents_mA(set_no: int):
+#     """Return expected (I1,I2,I3) in mA, preferring javab.json; else compute from parameters."""
+#     key = str(int(set_no))
+#     if key in JAVAB:
+#         return list(map(float, JAVAB[key]))
+#     # Compute from parameters (V in V, R in Ω -> I in A -> convert to mA)
+#     # I_A = solve_currents_from_params(V1, V2, R1, R2, R3)
+#     I_A = currents_analytic_A(V1, V2, R1, R2, R3)
+
+#     return (I_A * 1e3).tolist()
+
 def expected_currents_mA(set_no: int):
-    """Return expected (I1,I2,I3) in mA, preferring javab.json; else compute from parameters."""
     key = str(int(set_no))
     if key in JAVAB:
         return list(map(float, JAVAB[key]))
-    # Compute from parameters (V in V, R in Ω -> I in A -> convert to mA)
-    # I_A = solve_currents_from_params(V1, V2, R1, R2, R3)
-    I_A = currents_analytic_A(V1, V2, R1, R2, R3)
-
-    return (I_A * 1e3).tolist()
+    I1, I2, I3 = currents_analytic_A(V1, V2, R1, R2, R3)  # floats in A
+    return [I1*1e3, I2*1e3, I3*1e3]  # mA
 
 if st.button("Check my currents"):
     I_expected_mA = expected_currents_mA(set_number)
