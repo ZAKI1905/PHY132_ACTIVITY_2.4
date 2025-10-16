@@ -161,7 +161,7 @@ if not ps:
 V1, V2, R1, R2, R3 = map(float, ps)
 
 # Diagram
-diagram_path = f"https://raw.githubusercontent.com/ZAKI1905/phy132-kirchhoff-checker/main/diags/circuit_set_{int(set_number)}.png"
+diagram_path = f"https://raw.githubusercontent.com/ZAKI1905/phy132_activity_2.4/main/diags/circuit_set_{int(set_number)}.png"
 st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_container_width=True)
 
 # Expected equations
