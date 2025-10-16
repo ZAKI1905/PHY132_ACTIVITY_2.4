@@ -153,7 +153,7 @@ with colB:
     student_comment = st.text_input("Comment (optional)")
 
 # Problem set
-set_number = st.number_input("Enter your problem set number (1–10)", min_value=1, max_value=10, step=1)
+set_number = st.number_input("Enter your problem set number (1–40)", min_value=1, max_value=40, step=1)
 ps = PROBLEMS.get(str(int(set_number)))
 if not ps:
     st.stop()
