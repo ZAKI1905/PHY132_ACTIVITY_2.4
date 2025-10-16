@@ -162,7 +162,7 @@ V1, V2, R1, R2, R3 = map(float, ps)
 
 # Diagram
 diagram_path = f"https://raw.githubusercontent.com/ZAKI1905/phy132-kirchhoff-checker/main/Diagrams/circuit_set_{int(set_number)}.png"
-st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_column_width=True)
+st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_container_width=True)
 
 # Expected equations
 expected_eqs = compute_kirchhoff_coefficients(V1, V2, R1, R2, R3)
