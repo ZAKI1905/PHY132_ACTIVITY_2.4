@@ -189,10 +189,18 @@ st.markdown(r"""
 
 coeff_labels = ["I1", "I2", "I3", "Constant (D)"]
 student_eqs = []
+
 for i in range(3):
     with st.container(border=True):
         st.write(f"**Equation {i+1}**")
-        row = [st.number_input(f"Eq {i+1}: Coefficient of {label}", key=f"eq{i}_{label}", value=0.0, step=0.1, format="%.2f") for label in coeff_labels]
+        row = []
+        for label in coeff_labels:
+            if label == "Constant (D)":
+                prompt = f"Eq {i+1}: Constant D"
+            else:
+                prompt = f"Eq {i+1}: Coefficient of {label}"
+            val = st.number_input(prompt, key=f"eq{i}_{label}", value=0.0, step=0.1, format="%.2f")
+            row.append(val)
         student_eqs.append(row)
 
 if st.button("Check my equations"):
