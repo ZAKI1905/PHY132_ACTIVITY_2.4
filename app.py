@@ -76,18 +76,58 @@ def normalize_equation(eq):
     """Public wrapper: accepts list/tuple -> returns canonicalized np.ndarray."""
     return _canonicalize(np.array(eq, dtype=np.float64))
 
+# def compare_equations(student_eqs, expected_eqs):
+#     """
+#     Check if each student equation matches any expected equation
+#     under scale/sign invariance within tolerances.
+#     """
+#     stud_norm = [normalize_equation(eq) for eq in student_eqs]
+#     exp_norm  = [normalize_equation(eq) for eq in expected_eqs]
+
+#     matches = []
+#     for s in stud_norm:
+#         match_found = any(np.allclose(s, e, rtol=RTOL_EQ_COEFF, atol=ATOL_EQ_COEFF) for e in exp_norm)
+#         matches.append(match_found)
+#     return matches
+# ------- Robust scale-invariant equation matching -------
+EQ_RTL = 1e-6   # relative tolerance on vector fit
+EQ_ATL = 1e-9   # absolute tolerance (for near-zero expected)
+
+def _best_scale_and_error(stud, exp):
+    """
+    Compute scalar s minimizing || s*stud - exp ||_2.
+    Return (s, err, norm_exp).
+    """
+    stud = np.asarray(stud, dtype=float)
+    exp  = np.asarray(exp,  dtype=float)
+
+    denom = float(np.dot(stud, stud))
+    if denom < 1e-18:
+        # student vector is (close to) zero: only match if expected is also ~zero
+        s = 0.0
+        err = np.linalg.norm(exp)
+        return s, err, np.linalg.norm(exp)
+
+    s = float(np.dot(stud, exp) / denom)
+    diff = s*stud - exp
+    return s, np.linalg.norm(diff), np.linalg.norm(exp)
+
 def compare_equations(student_eqs, expected_eqs):
     """
-    Check if each student equation matches any expected equation
-    under scale/sign invariance within tolerances.
+    Each student equation must match SOME expected equation
+    under a single global scale (including sign).
     """
-    stud_norm = [normalize_equation(eq) for eq in student_eqs]
-    exp_norm  = [normalize_equation(eq) for eq in expected_eqs]
-
     matches = []
-    for s in stud_norm:
-        match_found = any(np.allclose(s, e, rtol=RTOL_EQ_COEFF, atol=ATOL_EQ_COEFF) for e in exp_norm)
-        matches.append(match_found)
+    for stud in student_eqs:
+        ok = False
+        for exp in expected_eqs:
+            s, err, norm_exp = _best_scale_and_error(stud, exp)
+            # Accept if residual is small relative to expected magnitude,
+            # with a small absolute floor to handle near-zero expected vectors.
+            if err <= max(EQ_RTL*norm_exp, EQ_ATL):
+                ok = True
+                break
+        matches.append(ok)
     return matches
 
 def check_linear_independence(equations):
