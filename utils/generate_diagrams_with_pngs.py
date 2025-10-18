@@ -9,14 +9,14 @@ from pathlib import Path
 # Paths / config
 # -----------------------------
 PROBLEMS_JSON = Path("../data/problems.json")   # {"1":[V1,V2,R1,R2,R3], ...}
-OUTPUT_DIR    = Path("../diags")                # final PNGs live here
-BUILD_DIR     = OUTPUT_DIR / "_build"        # temporary LaTeX build dir
+# OUTPUT_DIR    = Path("../diags")                # final PNGs live here
+# BUILD_DIR     = OUTPUT_DIR / "_build"        # temporary LaTeX build dir
 DENSITY_DPI   = "300"                        # PNG render resolution
 
 # --- at top-level (near your other config) ---
 OUT_DIRS = {
-    "light": Path("diags"),
-    "dark":  Path("diags_dark"),
+    "light": Path("../diags"),
+    "dark":  Path("../diags_dark"),
 }
 
 TEMPLATES = {
