@@ -209,10 +209,23 @@ if not ps:
 
 V1, V2, R1, R2, R3 = map(float, ps)
 
+# -------------------------------------
 # Diagram
-diagram_path = f"https://raw.githubusercontent.com/ZAKI1905/phy132_activity_2.4/main/diags/circuit_set_{int(set_number)}.png"
-st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_container_width=True)
+# --- Circuit diagram display (light/dark mode aware) ---
+dark_mode = st.toggle("Dark mode (invert colors for circuits)", value=False)
 
+# Choose local PNG path depending on mode
+img_dir = "diags_dark" if dark_mode else "diags"
+repo_base = "https://raw.githubusercontent.com/ZAKI1905/phy132_activity_2.4/main"
+img_url = f"{repo_base}/{img_dir}/circuit_set_{int(set_number)}.png"
+st.image(
+    img_url,
+    caption=f"Problem Set {int(set_number)} Diagram",
+    use_container_width=True,
+)
+
+# diagram_path = f"https://raw.githubusercontent.com/ZAKI1905/phy132_activity_2.4/main/diags/circuit_set_{int(set_number)}.png"
+# st.image(diagram_path, caption=f"Problem Set {int(set_number)} Diagram", use_container_width=True)
 # Expected equations
 expected_eqs = compute_kirchhoff_coefficients(V1, V2, R1, R2, R3)
 
